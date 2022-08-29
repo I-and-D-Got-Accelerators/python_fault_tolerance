@@ -1,5 +1,11 @@
 import pytest
 import datetime
+import sys
+import pprint
+
+sys.path.append('c:/Users/fsveide/Documents/gitresp/python_fault_tolerance-1/python_fault_tolerance/src')
+pprint.pprint(sys.path)
+
 import fault_tolerance
 
 class TestSuite:

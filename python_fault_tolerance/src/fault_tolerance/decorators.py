@@ -34,7 +34,7 @@ def forward_err_recovery_by_retry(max_no_of_retries: int = 1,
             raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float,"
                                                             f"but it takes {len(fas.args)} arguments")
         try:
-            if not _is_subclass(fas.annotations[fas.args[0][0]], int):
+            if not _is_subclass(fas.annotations[fas.args[0]], int):
                 raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the argument is an {fas.annotations[fas.args[0]]}")
         except KeyError:
             raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the argument has no type annotation")
