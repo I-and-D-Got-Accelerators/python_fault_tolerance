@@ -3,6 +3,7 @@ import inspect
 import time
 import typing as PT
 
+
 from fault_tolerance.Exceptions import IncorrectFaultToleranceSpecificationError, FailedToRecoverError
 
 def _is_subclass(obj: PT.Any, cls: type) -> bool:
@@ -72,11 +73,21 @@ def forward_err_recovery_by_retry(max_no_of_retries: int = 1,
 if __name__ == "__main__":
     print("Off we go")
     try:
-        @forward_err_recovery_by_retry()
-        def dummy():
+        class DummyException(Exception):
             pass
+        def backoff(attempt: int):
+            return attempt*0.1
+
+
+        @forward_err_recovery_by_retry(max_no_of_retries= 3, exc_lst=[DummyException], backoff_duration_fn= backoff)
+        def dummy():
+            raise DummyException()
         print("Incorrect")
     except IncorrectFaultToleranceSpecificationError:
+        print("Incorrect")
+    except FailedToRecoverError:
         print("Correct")
+    dummy()
     print("And done")
+    
 
