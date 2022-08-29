@@ -5,12 +5,14 @@
     <ProjectGuid>ab6cd711-0126-48ab-9854-294f3156f82c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>python_fault_tolerance.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>src</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>python_fault_tolerance</Name>
     <RootNamespace>python_fault_tolerance</RootNamespace>
+    <TestFramework>pytest</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +24,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="python_fault_tolerance.py" />
+    <Compile Include="src\fault_tolerance\decorators.py" />
+    <Compile Include="src\fault_tolerance\Exceptions.py" />
+    <Compile Include="src\fault_tolerance\__init__.py" />
+    <Compile Include="test\test_basics.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\fault_tolerance\" />
+    <Folder Include="src\fault_tolerance\__pycache__\" />
+    <Folder Include="test\" />
+    <Folder Include="src\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\fault_tolerance\__pycache__\decorators.cpython-38.pyc" />
+    <Content Include="src\fault_tolerance\__pycache__\Exceptions.cpython-38.pyc" />
+    <Content Include="src\fault_tolerance\__pycache__\__init__.cpython-38.pyc" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
