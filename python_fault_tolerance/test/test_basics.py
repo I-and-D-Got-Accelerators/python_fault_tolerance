@@ -188,28 +188,45 @@ class TestSuite:
 
 class TestBackoffSuite:
 
-    def test_backoff(self):
-        def backoff(attempt: int) -> float:
-            return attempt*1
+    _backoff_count = 0
+    _backoff_max_no_of_retries = 10
+    _backoff_time_delta = 0.1
 
+    def test_backoff(self):
+        """Test that backoff functionality works in the sense that the delays caused are reasonable and that 
+           the decorated function is called the specified number of times. """
+
+        # backoff duration time function for this test case
+        def backoff(attempt: int) -> float:
+            return TestBackoffSuite._backoff_time_delta
+
+        # the simulated exception use to denote the failure of the instrumented function 
         class DummyException(Exception):
             pass
 
-        @fault_tolerance.forward_err_recovery_by_retry(max_no_of_retries=10, exc_lst=[DummyException], backoff_duration_fn=backoff)
-        def simulated_faulty_function():
-            raise DummyException()
-
-        t1 = datetime.datetime.now()
         try:
-            simulated_faulty_function()
+            # definition of the simulated faulty function
+            @fault_tolerance.forward_err_recovery_by_retry(max_no_of_retries=TestBackoffSuite._backoff_max_no_of_retries, 
+                                                           exc_lst=[DummyException], 
+                                                           backoff_duration_fn=backoff)
+            def simulated_faulty_function():
+                TestBackoffSuite._backoff_count += 1
+                raise DummyException()
+
+            t1 = datetime.datetime.now()
+            try:
+                simulated_faulty_function()
+                assert False
+            except fault_tolerance.FailedToRecoverError:
+                pass
+            t2 = datetime.datetime.now()
+            duration_td = t2-t1
+            duration_sec = duration_td.seconds+duration_td.microseconds/1000000.0
+            print(f'Expected duration = {10*TestBackoffSuite._backoff_time_delta} second, actual duration = {duration_sec} seconds')
+            if (duration_sec < TestBackoffSuite._backoff_max_no_of_retries*TestBackoffSuite._backoff_time_delta  or 
+                TestBackoffSuite._backoff_count!= 10):
+                assert False
+            else:
+                assert True
+        except fault_tolerance.IncorrectFaultToleranceSpecificationError:
             assert False
-        except fault_tolerance.FailedToRecoverError:
-            pass
-        t2 = datetime.datetime.now()
-        duration_td = t2-t1
-        duration_sec = duration_td.seconds+duration_td.microseconds/1000000.0
-        print(f'Expected duration = 1 second, actual duration = {duration_sec} seconds')
-        if duration_sec < 10*1:
-            assert False
-        else:
-            assert True
