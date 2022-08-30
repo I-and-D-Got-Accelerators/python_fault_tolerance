@@ -2,9 +2,12 @@ import pytest
 import datetime
 import sys
 import pprint
+import os
+currDirr = os. getcwd()
+sys.path.append(f'{currDirr}/python_fault_tolerance/src')
+print(currDirr)
+#pprint.pprint(sys.path)
 
-sys.path.append('c:/Users/fsveide/Documents/gitresp/python_fault_tolerance-1/python_fault_tolerance/src')
-pprint.pprint(sys.path)
 
 import fault_tolerance
 
