@@ -41,7 +41,8 @@ def forward_err_recovery_by_retry(max_no_of_retries: int = 1,
 
     # check max_no_of_retries
     if not isinstance(max_no_of_retries, int) or max_no_of_retries < 1:
-        raise IncorrectFaultToleranceSpecificationError(f"The parameter max_no_of_retries is not an int, but a {type(max_no_of_retries)}")
+        raise IncorrectFaultToleranceSpecificationError(f"The parameter max_no_of_retries is not an int, but a {type(max_no_of_retries)}"
+                                                        f" or the value is beneath zero (max_no_of_retries={max_no_of_retries})")
 
     # check exc_lst
     if not isinstance(exc_lst, list) or len(exc_lst) < 1 or any(map(lambda element: not _is_subclass(element, Exception), exc_lst)):
@@ -52,7 +53,7 @@ def forward_err_recovery_by_retry(max_no_of_retries: int = 1,
             raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but got '{backoff_duration_fn}'")
         fas: inspect.FullArgSpec = inspect.getfullargspec(backoff_duration_fn)
         if len(fas.args) != 1:
-            raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float,"
+            raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, "
                                                             f"but it takes {len(fas.args)} arguments")
         try:
             if not _is_subclass(fas.annotations[fas.args[0]], int):
@@ -64,7 +65,7 @@ def forward_err_recovery_by_retry(max_no_of_retries: int = 1,
             if not _is_subclass(fas.annotations['return'], float):
                 raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the functions returns an {fas.annotations['return']} instead")
         except KeyError:
-                raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the functions returns None instead")
+            raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the functions returns None instead")
 
 
 
