@@ -127,6 +127,7 @@ def backward_err_recovery_by_retry(max_no_of_retries: int = 1,
         def wrapper(*args, **kwargs):
             attempts_left: int = max_no_of_retries
             completed: bool = False
+            # add call to save_initial_state, need to be wrapped in an outer try - except
             while not completed:
                 try:
                     return fx(*args, **{**kwargs, **{'attempt': max_no_of_retries-attempts_left)})
@@ -140,6 +141,8 @@ def backward_err_recovery_by_retry(max_no_of_retries: int = 1,
                 finally:
                     if attempts_left < 1:
                         raise FailedToRecoverError(f"Failed to recover from exceptions after {max_no_of_retries} attempts")
+                    # here we should add recover_state_fn, make sure the right "attempt number is passed"
+                                        
         return wrapper
     return decorator
 
