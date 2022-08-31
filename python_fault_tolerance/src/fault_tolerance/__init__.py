@@ -1,2 +1,3 @@
 from .Exceptions import FailedToRecoverError, IncorrectFaultToleranceSpecificationError
 from .decorators import forward_err_recovery_by_retry
+from .backward_error_recovery_decorators import backward_err_recovery_by_retry
