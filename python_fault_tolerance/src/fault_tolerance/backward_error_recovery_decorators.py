@@ -68,10 +68,30 @@ def backward_err_recovery_by_retry(max_no_of_retries: int = 1,
                 raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the functions returns an {fas.annotations['return']} instead")
         except KeyError:
             raise IncorrectFaultToleranceSpecificationError(f"The parameter backoff_duration_fn is incorrect, expected a function taking an int returning a float, but the functions returns None instead")
+
     # check save_initial_state_fn
     if save_initial_state_fn is None:
-        raise IncorrectFaultToleranceSpecificationError(
-            f"The parameter save_initial_state_fn is incorrect, expected a function taking an argument and returning nothing, but got '{save_initial_state_fn}'")
+        raise IncorrectFaultToleranceSpecificationError( f"The parameter save_initial_state_fn is incorrect, expected"
+                                                         f" a function taking no argument and returning nothing, but"
+                                                         f" got '{save_initial_state_fn}'")
+
+    if not isinstance(save_initial_state_fn, PT.Callable):
+        raise IncorrectFaultToleranceSpecificationError(f"The parameter save_initial_state_fn is incorrect, expected a "
+                                                        f"function taking no argument returning nothing, but"
+                                                        f" got '{save_initial_state_fn}'")
+    fas: inspect.FullArgSpec = inspect.getfullargspec(save_initial_state_fn)
+    if len(fas.args) != 0:
+        raise IncorrectFaultToleranceSpecificationError(f"The parameter save_initial_state_fn is incorrect, expected "
+                                                        f"a function taking no argument returning a nothing, but it"
+                                                        f" takes {len(fas.args)} arguments")
+
+    try:
+        if not _is_subclass(fas.annotations['return'], PT.NoReturn):
+            raise IncorrectFaultToleranceSpecificationError(f"The parameter save_initial_state_fn is incorrect, expected"
+                                                            f" a function taking no argument returning nothing, but the "
+                                                            f"functions returns an {fas.annotations['return']} instead")
+    except KeyError:
+       pass
 
     def decorator(fx: PT.Callable) -> PT.Callable:
         functools.wraps(fx)
