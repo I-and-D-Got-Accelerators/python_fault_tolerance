@@ -24,6 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="python_fault_tolerance.py" />
+    <Compile Include="src\fault_tolerance\backward_error_recovery_decorators.py" />
     <Compile Include="src\fault_tolerance\decorators.py" />
     <Compile Include="src\fault_tolerance\Exceptions.py" />
     <Compile Include="src\fault_tolerance\__init__.py" />

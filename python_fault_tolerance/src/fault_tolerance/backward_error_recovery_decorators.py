@@ -39,7 +39,7 @@ def backward_err_recovery_by_retry(max_no_of_retries: int = 1,
                                    exc_lst: PT.List[Exception] = [],
                                    backoff_duration_fn: PT.Callable[[int], float] = None,
                                    save_initial_state_fn: PT.Callable[[], PT.NoReturn] = None,
-                                   recover_state: PT.Callable[[int], PT.NoReturn] = None) -> PT.Callable:
+                                   recover_state_fn: PT.Callable[[int], PT.NoReturn] = None) -> PT.Callable:
 
     # check max_no_of_retries
     if not isinstance(max_no_of_retries, int) or max_no_of_retries < 1:
@@ -92,6 +92,35 @@ def backward_err_recovery_by_retry(max_no_of_retries: int = 1,
                                                             f"functions returns an {fas.annotations['return']} instead")
     except KeyError:
        pass
+    #Restore state function
+    if recover_state_fn is None:
+        raise IncorrectFaultToleranceSpecificationError( f"The parameter recover_state_fn is incorrect, expected"
+                                                         f" a function taking an int argument and returning nothing, but"
+                                                         f" got '{recover_state_fn}'")
+
+    if not isinstance(recover_state_fn, PT.Callable):
+        raise IncorrectFaultToleranceSpecificationError(f"The parameter recover_state_fn is incorrect, expected a "
+                                                        f"function taking an int argument returning nothing, but"
+                                                        f" got '{recover_state_fn}'")
+    fas: inspect.FullArgSpec = inspect.getfullargspec(recover_state_fn)
+    if len(fas.args) != 1:
+        raise IncorrectFaultToleranceSpecificationError(f"The parameter recover_state_fn is incorrect, expected "
+                                                        f"a function taking an int argument returning a nothing, but it"
+                                                        f" takes {len(fas.args)} arguments")
+    try:
+        if not _is_subclass(fas.annotations[fas.args[0]], int):
+            raise IncorrectFaultToleranceSpecificationError(f"The parameter recover_state_fn is incorrect, expected a function taking an int returning nothing, but the argument is an {fas.annotations[fas.args[0]]}")
+    except KeyError:
+        raise IncorrectFaultToleranceSpecificationError(f"The parameter recover_state_fn is incorrect, expected a function taking an int returning nothing, but the argument has no type annotation")
+
+    try:
+        if not _is_subclass(fas.annotations['return'], PT.NoReturn):
+            raise IncorrectFaultToleranceSpecificationError(f"The parameter recover_state_fn is incorrect, expected"
+                                                            f" a function taking an int argument returning nothing, but the "
+                                                            f"functions returns an {fas.annotations['return']} instead")
+
+    except KeyError:
+       pass
 
     def decorator(fx: PT.Callable) -> PT.Callable:
         functools.wraps(fx)
@@ -100,7 +129,7 @@ def backward_err_recovery_by_retry(max_no_of_retries: int = 1,
             completed: bool = False
             while not completed:
                 try:
-                    return fx(*args, **kwargs)
+                    return fx(*args, **{**kwargs, **{'attempt': max_no_of_retries-attempts_left)})
                 except Exception as e:
                     if any(map(lambda exc: isinstance(e, exc), exc_lst)):
 

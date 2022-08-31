@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32802.440
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "python_fault_tolerance", "python_fault_tolerance\python_fault_tolerance.pyproj", "{AB6CD711-0126-48AB-9854-294F3156F82C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B23C99F-3F08-4C0F-BCD1-8982B0D96260}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
