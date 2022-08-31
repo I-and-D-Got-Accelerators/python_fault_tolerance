@@ -1,6 +1,6 @@
 import pytest
 import datetime
-import fault_tolerance
+import python_fault_tolerance.src.fault_tolerance as fault_tolerance
 
 class TestSuite:
 
