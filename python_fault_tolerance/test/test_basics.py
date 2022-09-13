@@ -30,8 +30,8 @@ import typing as PT
 import pprint
 
 # this should not be here, resolve search path configuration in tools!
-sys.path.append('c:/Users/fsveide/Documents/gitresp/python_fault_tolerance-1/python_fault_tolerance/src')
-pprint.pprint(sys.path)
+#sys.path.append('c:/Users/fsveide/Documents/gitresp/python_fault_tolerance-1/python_fault_tolerance/src')
+#pprint.pprint(sys.path)
 
 import fault_tolerance
 
